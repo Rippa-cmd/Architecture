@@ -1,4 +1,4 @@
-package ru.geekbrains;
+package geekbrains.service;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -13,12 +13,13 @@ public class WebServer {
 
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             System.out.println("Server started!");
+            RequestParser requestParser = new RequestParser();
 
             while (true) {
                 Socket socket = serverSocket.accept();
                 System.out.println("New client connected!");
 
-                service.execute(new HandleRequest(socket));
+                service.execute(new HandleRequest(socket, requestParser));
             }
         } catch (IOException e) {
             e.printStackTrace();

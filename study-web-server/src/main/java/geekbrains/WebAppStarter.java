@@ -1,9 +1,10 @@
-package ru.geekbrains;
+package geekbrains;
+
+import geekbrains.service.WebServer;
+
+import static geekbrains.utils.WebConfigs.*;
 
 public class WebAppStarter {
-
-    private static final int DEFAULT_PORT = 8080;
-    private static final int DEFAULT_THREADS = 6;
 
     public static void main(String[] args) {
         if (args.length == 2)
