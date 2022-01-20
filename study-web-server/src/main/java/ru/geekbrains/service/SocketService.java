@@ -1,4 +1,4 @@
-package geekbrains.service;
+package ru.geekbrains.service;
 
 import java.io.*;
 import java.net.Socket;
@@ -10,8 +10,12 @@ public class SocketService implements Closeable {
 
     private final Socket socket;
 
-    public SocketService(Socket socket) {
+    private SocketService(Socket socket) {
         this.socket = socket;
+    }
+
+    public static SocketService createSocketService(Socket socket) {
+        return new SocketService(socket);
     }
 
     public Deque<String> readRequest() {
