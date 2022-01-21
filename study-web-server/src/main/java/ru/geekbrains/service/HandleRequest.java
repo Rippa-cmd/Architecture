@@ -6,12 +6,13 @@ import ru.geekbrains.httpObjects.HttpResponse;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Deque;
 
 import ru.geekbrains.httpObjects.HttpResponse.HttpResponseBuilder;
+import ru.geekbrains.requestParser.RequestParser;
+
+import ru.geekbrains.socketService.SocketService;
+import ru.geekbrains.socketService.SocketServiceFactory;
 
 public class HandleRequest implements Runnable {
 
@@ -29,12 +30,12 @@ public class HandleRequest implements Runnable {
         HttpRequest httpRequest = requestParser.parse(rawRequest);
         HttpResponseBuilder httpResponseBuilder = HttpResponse.createBuilder().
                 withHttpProtocol(httpRequest.getHttpProtocol());
+        FileHandler fileHandler = FileHandler.createFileHandler(config, httpRequest.getPath());
 
         try {
             if (httpRequest.getMethod().equals("GET")) {
-                Path path = Paths.get(config.getWWW(), httpRequest.getPath());
 
-                if (!Files.exists(path) || Files.isDirectory(path)) {
+                if (fileHandler.isFileUnreadable()) {
                     httpResponseBuilder.withStatus(404);
                     String response = responseSerializer.createResponse(httpResponseBuilder.build());
                     socketService.writeResponse(response);
@@ -43,9 +44,7 @@ public class HandleRequest implements Runnable {
                 }
 
                 httpResponseBuilder.withStatus(200);
-                StringBuilder body = new StringBuilder();
-                Files.readAllLines(path).forEach(body::append);
-                httpResponseBuilder.withBody(body.toString());
+                httpResponseBuilder.withBody(fileHandler.readFile());
 
             } else {
                 httpResponseBuilder.withStatus(405);
@@ -72,7 +71,7 @@ public class HandleRequest implements Runnable {
         }
 
         public HandleRequestBuilder withSocketService(Socket socket) {
-            this.handleRequest.socketService = SocketService.createSocketService(socket);;
+            this.handleRequest.socketService = SocketServiceFactory.createSocketService(socket);
             return this;
         }
 
