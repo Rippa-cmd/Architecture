@@ -1,12 +1,15 @@
-package geekbrains.service;
+package ru.geekbrains.service;
 
-import geekbrains.utils.HttpRequest;
+import ru.geekbrains.httpObjects.HttpRequest;
 
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RequestParser {
+
+    private RequestParser() {
+    }
 
     public HttpRequest parse(Deque<String> rawRequest) {
         String[] request = rawRequest.pollFirst().split(" ");
@@ -26,6 +29,16 @@ public class RequestParser {
             body.append(rawRequest.pollFirst());
         }
 
-        return new HttpRequest(request[0], request[1], request[2], headers, body.toString());
+        return HttpRequest.createBuilder()
+                .withMethod(request[0])
+                .withPath(request[1])
+                .withHttpProtocol(request[2])
+                .withHeaders(headers)
+                .withBody(body.toString())
+                .build();
+    }
+
+    public static RequestParser createRequestParser() {
+        return new RequestParser();
     }
 }
