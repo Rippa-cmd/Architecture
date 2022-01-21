@@ -1,4 +1,4 @@
-package ru.geekbrains.service;
+package ru.geekbrains.socketService;
 
 import java.io.*;
 import java.net.Socket;
@@ -6,16 +6,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Deque;
 import java.util.LinkedList;
 
-public class SocketService implements Closeable {
+public class SocketServiceImpl implements SocketService {
 
     private final Socket socket;
 
-    private SocketService(Socket socket) {
+    SocketServiceImpl(Socket socket) {
         this.socket = socket;
-    }
-
-    public static SocketService createSocketService(Socket socket) {
-        return new SocketService(socket);
     }
 
     public Deque<String> readRequest() {
@@ -46,7 +42,6 @@ public class SocketService implements Closeable {
         }
     }
 
-    @Override
     public void close() throws IOException {
         if (!socket.isClosed())
             socket.close();

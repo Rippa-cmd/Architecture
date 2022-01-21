@@ -22,6 +22,10 @@ public class HttpRequest {
         return path;
     }
 
+    public void setPath(String path) {
+        this.path = path;
+    }
+
     public String getHttpProtocol() {
         return httpProtocol;
     }

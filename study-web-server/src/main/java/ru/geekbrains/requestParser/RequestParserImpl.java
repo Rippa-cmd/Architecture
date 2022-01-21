@@ -1,4 +1,4 @@
-package ru.geekbrains.service;
+package ru.geekbrains.requestParser;
 
 import ru.geekbrains.httpObjects.HttpRequest;
 
@@ -6,9 +6,9 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RequestParser {
+public class RequestParserImpl implements RequestParser{
 
-    private RequestParser() {
+    RequestParserImpl() {
     }
 
     public HttpRequest parse(Deque<String> rawRequest) {
@@ -36,9 +36,5 @@ public class RequestParser {
                 .withHeaders(headers)
                 .withBody(body.toString())
                 .build();
-    }
-
-    public static RequestParser createRequestParser() {
-        return new RequestParser();
     }
 }
