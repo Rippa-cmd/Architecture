@@ -2,6 +2,9 @@ package ru.geekbrains.service;
 
 import ru.geekbrains.config.Config;
 import ru.geekbrains.config.ConfigFactory;
+import ru.geekbrains.handler.HandleRequest;
+import ru.geekbrains.handler.MethodHandler;
+import ru.geekbrains.handler.MethodHandlerFactory;
 import ru.geekbrains.requestParser.RequestParser;
 import ru.geekbrains.requestParser.RequestParserFactory;
 
@@ -28,7 +31,7 @@ public class WebServer {
                 service.execute(HandleRequest.createBuilder()
                         .withSocketService(socket)
                         .withRequestParser(requestParser)
-                        .withConfig(config)
+                        .withMethodHandler(MethodHandlerFactory.create(ResponseSerializer.createResponseSerializer(), config))
                         .build());
             }
         } catch (IOException e) {
