@@ -1,14 +1,11 @@
-package ru.geekbrains.service;
+package ru.geekbrains.handler;
 
-import ru.geekbrains.config.Config;
 import ru.geekbrains.httpObjects.HttpRequest;
-import ru.geekbrains.httpObjects.HttpResponse;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Deque;
 
-import ru.geekbrains.httpObjects.HttpResponse.HttpResponseBuilder;
 import ru.geekbrains.requestParser.RequestParser;
 
 import ru.geekbrains.socketService.SocketService;
@@ -18,8 +15,7 @@ public class HandleRequest implements Runnable {
 
     private SocketService socketService;
     private RequestParser requestParser;
-    private final ResponseSerializer responseSerializer = ResponseSerializer.createResponseSerializer();
-    private Config config;
+    private MethodHandler methodHandler;
 
     private HandleRequest() {
     }
@@ -28,30 +24,10 @@ public class HandleRequest implements Runnable {
     public void run() {
         Deque<String> rawRequest = socketService.readRequest();
         HttpRequest httpRequest = requestParser.parse(rawRequest);
-        HttpResponseBuilder httpResponseBuilder = HttpResponse.createBuilder().
-                withHttpProtocol(httpRequest.getHttpProtocol());
-        FileHandler fileHandler = FileHandler.createFileHandler(config, httpRequest.getPath());
+
+        socketService.writeResponse(methodHandler.handle(httpRequest));
 
         try {
-            if (httpRequest.getMethod().equals("GET")) {
-
-                if (fileHandler.isFileUnreadable()) {
-                    httpResponseBuilder.withStatus(404);
-                    String response = responseSerializer.createResponse(httpResponseBuilder.build());
-                    socketService.writeResponse(response);
-                    socketService.close();
-                    return;
-                }
-
-                httpResponseBuilder.withStatus(200);
-                httpResponseBuilder.withBody(fileHandler.readFile());
-
-            } else {
-                httpResponseBuilder.withStatus(405);
-            }
-            String response = responseSerializer.createResponse(httpResponseBuilder.build());
-            socketService.writeResponse(response);
-
             socketService.close();
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -80,8 +56,8 @@ public class HandleRequest implements Runnable {
             return this;
         }
 
-        public HandleRequestBuilder withConfig(Config config) {
-            this.handleRequest.config = config;
+        public HandleRequestBuilder withMethodHandler(MethodHandler methodHandler) {
+            this.handleRequest.methodHandler = methodHandler;
             return this;
         }
 
