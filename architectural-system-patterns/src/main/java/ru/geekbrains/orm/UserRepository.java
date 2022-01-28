@@ -13,8 +13,8 @@ public class UserRepository {
 
     public UserRepository(Connection conn) {
         this.conn = conn;
-        this.unitOfWork = new UnitOfWork(conn);
         this.userMapper = new UserMapper(conn);
+        this.unitOfWork = new UnitOfWork(userMapper);
     }
 
     public Optional<User> findById(long id) {
@@ -22,7 +22,7 @@ public class UserRepository {
     }
 
     public void beginTransaction() {
-        this.unitOfWork = new UnitOfWork(conn);
+        this.unitOfWork = new UnitOfWork(userMapper);
     }
 
     public void registerNew(User user) {
