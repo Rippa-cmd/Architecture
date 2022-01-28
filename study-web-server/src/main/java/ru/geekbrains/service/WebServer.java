@@ -19,10 +19,11 @@ public class WebServer {
     public void start(String[] args) {
         Config config = ConfigFactory.create(args);
         ExecutorService service = Executors.newFixedThreadPool(config.getThreads());
+        RequestParser requestParser = RequestParserFactory.createRequestParser("secured");
+        MethodHandler methodHandler = MethodHandlerFactory.create(ResponseSerializer.createResponseSerializer(), config);
 
         try (ServerSocket serverSocket = new ServerSocket(config.getPort())) {
             System.out.println("Server started!");
-            RequestParser requestParser = RequestParserFactory.createRequestParser("secured");
 
             while (true) {
                 Socket socket = serverSocket.accept();
@@ -31,7 +32,7 @@ public class WebServer {
                 service.execute(HandleRequest.createBuilder()
                         .withSocketService(socket)
                         .withRequestParser(requestParser)
-                        .withMethodHandler(MethodHandlerFactory.create(ResponseSerializer.createResponseSerializer(), config))
+                        .withMethodHandler(methodHandler)
                         .build());
             }
         } catch (IOException e) {

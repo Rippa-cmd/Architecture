@@ -12,6 +12,8 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
 
     <modules>
@@ -19,6 +21,7 @@
         <module>structural-patterns</module>
         <module>behavioral-patterns</module>
         <module>architectural-system-patterns</module>
+        <module>spring-mvc</module>
     </modules>
 
 </project>
