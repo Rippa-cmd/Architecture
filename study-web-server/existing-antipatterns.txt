@@ -1,0 +1,3 @@
+Magic numbers - коды ошибок в ResponseSerializer'е
+Reinventing the wheel (существует множество готовых веб-приложений), местами Blind Faith и Improbability factor
+Возможно Lasagna Code, Input kludge
